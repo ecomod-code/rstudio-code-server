@@ -9,7 +9,11 @@ if [[ ! -f .env ]]; then
   exit 1
 fi
 
-./scripts/prepare-directories.sh
+set -a
+source "$BASE/.env"
+set +a
+
+bash ./scripts/prepare-directories.sh
 docker compose up -d
 
 echo

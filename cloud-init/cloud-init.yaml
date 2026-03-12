@@ -1,0 +1,26 @@
+#cloud-config
+package_update: true
+packages:
+  - git
+    
+runcmd:
+  - git clone https://github.com/ecomod-code/rstudio-code-server.git /srv/ecomod-server
+  - chown -R cloud:cloud /srv/ecomod-server
+  - |
+      cat >/srv/ecomod-server/.env <<'EOF'
+      SERVER_URLexample.domain.tld
+      ACME_EMAIL=admin@example.org
+      USER_PASSWORD=CHANGE_ME
+      TZ=Europe/Berlin
+      PUID=1000
+      PGID=1000
+      EOF
+  - chown cloud:cloud /srv/ecomod-server/.env
+  - chmod 600 /srv/ecomod-server/.env
+  - bash /srv/ecomod-server/scripts/install-prereqs.sh
+  - usermod -aG docker cloud || true
+  - bash /srv/ecomod-server/scripts/start-stack.sh
+
+final_message: |
+  ecomod deployment finished.
+  Stack in /srv/ecomod-server

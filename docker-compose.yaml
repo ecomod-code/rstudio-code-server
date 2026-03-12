@@ -1,0 +1,40 @@
+services:
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./volumes/caddy_data:/data
+      - ./volumes/caddy_config:/config
+    environment:
+      - SERVER_URL=${SERVER_URL}
+      - ACME_EMAIL=${ACME_EMAIL}
+
+  rstudio:
+    image: ecomod/rstudio:latest
+    restart: unless-stopped
+    expose:
+      - "8787"
+    volumes:
+      - ./volumes/workspace:/home/rstudio
+    environment:
+      - USER=rstudio
+      - PASSWORD=${USER_PASSWORD}
+
+  code-server:
+    image: ecomod/code-server:latest
+    restart: unless-stopped
+    expose:
+      - "8443"
+    command: --auth password --default-folder /data
+    volumes:
+      - ./volumes/code_config:/config
+      - ./volumes/workspace:/data
+    environment:
+      - PASSWORD=${USER_PASSWORD}
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}

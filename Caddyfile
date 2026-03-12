@@ -1,0 +1,14 @@
+{$SERVER_URL} {
+  tls {$ACME_EMAIL}
+
+  encode zstd gzip
+
+  @code_root path /code
+  redir @code_root /code/ 301
+
+  handle_path /code/* {
+    reverse_proxy code-server:8443
+  }
+
+  reverse_proxy rstudio:8787
+}

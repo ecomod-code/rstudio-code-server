@@ -9,6 +9,7 @@ runcmd:
   - |
       cat >/srv/ecomod-server/.env <<'EOF'
       SERVER_URLexample.domain.tld
+      DOCKER_MTU=1450
       ACME_EMAIL=admin@example.org
       USER_PASSWORD=CHANGE_ME
       TZ=Europe/Berlin

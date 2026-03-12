@@ -37,3 +37,9 @@ services:
       - TZ=${TZ}
       - PUID=${PUID}
       - PGID=${PGID}
+     
+networks:
+  ecomod:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: "${DOCKER_MTU:-1450}"

@@ -2,6 +2,9 @@ services:
   caddy:
     image: caddy:2
     restart: unless-stopped
+    depends_on:
+      - rstudio
+      - code-server
     ports:
       - "80:80"
       - "443:443"
@@ -12,6 +15,8 @@ services:
     environment:
       - SERVER_URL=${SERVER_URL}
       - ACME_EMAIL=${ACME_EMAIL}
+    networks:
+      - ecomod
 
   rstudio:
     image: ecomod/rstudio:latest
@@ -23,6 +28,9 @@ services:
     environment:
       - USER=rstudio
       - PASSWORD=${USER_PASSWORD}
+      - TZ=${TZ}
+    networks:
+      - ecomod
 
   code-server:
     image: ecomod/code-server:latest
@@ -37,7 +45,9 @@ services:
       - TZ=${TZ}
       - PUID=${PUID}
       - PGID=${PGID}
-     
+    networks:
+      - ecomod
+
 networks:
   ecomod:
     driver: bridge

@@ -39,7 +39,7 @@ services:
       - "8443"
     volumes:
       - ./volumes/code_config:/config
-      - ./volumes/workspace:/data
+      - ./volumes/workspace:/home/abc
     environment:
       - PASSWORD=${USER_PASSWORD}
       - TZ=${TZ}

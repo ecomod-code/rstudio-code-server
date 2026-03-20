@@ -38,8 +38,7 @@ services:
     expose:
       - "8443"
     volumes:
-      - ./volumes/code_config:/config
-      - ./volumes/workspace:/home/abc
+      - ./volumes/workspace:/config
     environment:
       - PASSWORD=${USER_PASSWORD}
       - TZ=${TZ}

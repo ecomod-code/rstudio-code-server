@@ -1,3 +1,15 @@
+{
+  # Compose publishes 443/tcp only, and the cloud security groups are TCP-only
+  # too, so QUIC packets never reach this container. Without this block Caddy
+  # still advertises HTTP/3 via Alt-Svc on every response; clients that act on
+  # it hang in the QUIC handshake and show a blank page, with nothing in the
+  # access log, for as long as they cache the advertisement (up to 30 days).
+  # Enable h3 only together with a "443:443/udp" port mapping and a UDP rule.
+  servers {
+    protocols h1 h2
+  }
+}
+
 {$SERVER_URL} {
   tls {$ACME_EMAIL}
 

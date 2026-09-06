@@ -38,7 +38,13 @@ services:
     expose:
       - "8443"
     volumes:
-      - ./volumes/workspace:/config
+      # /config is linuxserver's own state dir (settings, extensions, .ssh,
+      # .bashrc). Keep it separate so it does not litter the researcher's home.
+      - ./volumes/code_config:/config
+      # The shared workspace. code-server opens DEFAULT_WORKSPACE, which
+      # defaults to /config/workspace, so mounting here means VS Code lands on
+      # exactly the directory RStudio has as /home/rstudio.
+      - ./volumes/workspace:/config/workspace
     environment:
       - PASSWORD=${USER_PASSWORD}
       - TZ=${TZ}
@@ -50,5 +56,5 @@ services:
 networks:
   ecomod:
     driver: bridge
-    driver_opts:
-      com.docker.network.driver.mtu: "${DOCKER_MTU:-1450}"
+    # MTU is set daemon-wide by scripts/install-prereqs.sh via
+    # default-network-opts, so it applies here without a per-network option.

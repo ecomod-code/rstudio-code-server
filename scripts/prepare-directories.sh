@@ -6,5 +6,6 @@ cd "$BASE"
 
 mkdir -p \
   volumes/workspace \
+  volumes/code_config \
   volumes/caddy_data \
   volumes/caddy_config

@@ -2,14 +2,13 @@
 package_update: true
 packages:
   - git
-    
+
 runcmd:
   - git clone https://github.com/ecomod-code/rstudio-code-server.git /srv/ecomod-server
   - chown -R cloud:cloud /srv/ecomod-server
   - |
       cat >/srv/ecomod-server/.env <<'EOF'
-      SERVER_URLexample.domain.tld
-      DOCKER_MTU=1450
+      SERVER_URL=example.domain.tld
       ACME_EMAIL=admin@example.org
       USER_PASSWORD=CHANGE_ME
       TZ=Europe/Berlin

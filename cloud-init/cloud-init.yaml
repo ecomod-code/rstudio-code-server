@@ -20,6 +20,9 @@ runcmd:
   - bash /srv/ecomod-server/scripts/install-prereqs.sh
   - usermod -aG docker cloud || true
   - bash /srv/ecomod-server/scripts/start-stack.sh
+  # Monitoring agent; port 9100 stays closed unless the VM gets the
+  # monitoring security group.
+  - bash /srv/ecomod-server/scripts/setup-monitoring-agent.sh
   # Optional Nextcloud sync. Leave the values empty to skip it; enable it later
   # on the VM with /srv/ecomod-server/scripts/setup-nextcloud-sync.sh
   - >-

@@ -10,7 +10,7 @@ runcmd:
       cat >/srv/ecomod-server/.env <<'EOF'
       SERVER_URL=example.domain.tld
       ACME_EMAIL=admin@example.org
-      USER_PASSWORD=CHANGE_ME
+      USER_PASSWORD='CHANGE_ME'
       TZ=Europe/Berlin
       PUID=1000
       PGID=1000
@@ -35,3 +35,10 @@ runcmd:
 final_message: |
   ecomod deployment finished.
   Stack in /srv/ecomod-server
+
+# install-prereqs.sh runs apt upgrade; a new kernel only takes effect after a
+# reboot. Runs after runcmd and final_message, and only when Ubuntu flags it.
+power_state:
+  mode: reboot
+  message: "Rebooting to activate updates installed during provisioning"
+  condition: test -f /var/run/reboot-required

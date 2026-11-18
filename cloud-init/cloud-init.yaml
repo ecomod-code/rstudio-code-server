@@ -20,6 +20,14 @@ runcmd:
   - bash /srv/ecomod-server/scripts/install-prereqs.sh
   - usermod -aG docker cloud || true
   - bash /srv/ecomod-server/scripts/start-stack.sh
+  # Optional Nextcloud sync. Leave the values empty to skip it; enable it later
+  # on the VM with /srv/ecomod-server/scripts/setup-nextcloud-sync.sh
+  - >-
+      NC_URL=''
+      NC_USER=''
+      NC_APP_PASSWORD=''
+      NC_REMOTE_PATH='/RStudio-Server'
+      bash /srv/ecomod-server/scripts/setup-nextcloud-sync.sh
 
 final_message: |
   ecomod deployment finished.

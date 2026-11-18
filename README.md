@@ -48,15 +48,17 @@ Caddy automatically obtains and renews TLS certificates via **Let's Encrypt**.
 ```
 ecomod-server/
 ├── .env.example
-├── docker-compose.yml
+├── docker-compose.yaml
 ├── Caddyfile
 ├── scripts/
 │   ├── install-prereqs.sh
 │   ├── prepare-directories.sh
 │   ├── start-stack.sh
-│   └── update-stack.sh
+│   ├── update-stack.sh
+│   └── setup-nextcloud-sync.sh
 ├── docs/
-│   └── migration-guide.md
+│   ├── migration-guide.md
+│   └── nextcloud-sync.md
 └── cloud-init/
     └── cloud-init.yaml
 ```
@@ -69,7 +71,7 @@ Template for per-server configuration.
 
 Copy to `.env` and adjust values.
 
-### `docker-compose.yml`
+### `docker-compose.yaml`
 
 Defines the service stack:
 
@@ -77,13 +79,20 @@ Defines the service stack:
 - `rstudio`
 - `code-server`
 
+The RStudio and code-server images are built in their own repositories and published on Docker Hub:
+
+| Service | Image | Source |
+|----|----|----|
+| `rstudio` | [`ecomod/rstudio`](https://hub.docker.com/r/ecomod/rstudio) | https://github.com/ecomod-code/rstudio-docker |
+| `code-server` | [`ecomod/code-server`](https://hub.docker.com/r/ecomod/code-server) | https://github.com/ecomod-code/code-server |
+
 ### `Caddyfile`
 
 Reverse proxy configuration and TLS setup.
 
 ### `scripts/`
 
-Operational scripts for convinience.
+Operational scripts for convenience.
 
 | Script | Purpose |
 |------|------|
@@ -91,6 +100,7 @@ Operational scripts for convinience.
 | `prepare-directories.sh` | creates persistent storage directories |
 | `start-stack.sh` | launches the stack |
 | `update-stack.sh` | updates container images |
+| `setup-nextcloud-sync.sh` | optional: syncs a Nextcloud folder into the workspace |
 
 # Quick Start (Manual Deployment)
 
@@ -183,6 +193,26 @@ These directories contain:
 
 These directories are not part of the Git repo.
 
+# Nextcloud Sync (optional)
+
+`scripts/setup-nextcloud-sync.sh` syncs one folder of the user's Nextcloud (default `/RStudio-Server`) two-way into `volumes/workspace/RStudio-Server`, i.e. `~/RStudio-Server` in RStudio and VS Code. It runs every 15 minutes via a systemd timer.
+
+Enable it on a running server (prompts for instance URL, app username and app password; re-run to change them):
+
+```
+./scripts/setup-nextcloud-sync.sh
+```
+
+Operate it:
+
+```
+sudo systemctl start --no-block nextcloud-sync.service   # sync now
+journalctl -u nextcloud-sync -f                          # logs
+sudo systemctl disable --now nextcloud-sync.timer        # disable
+```
+
+What users need to do (app password, folder, rules for the synced folder): [docs/nextcloud-sync.md](docs/nextcloud-sync.md).
+
 # Cloud‑Init Deployment
 
 New VMs can automatically provision the server stack via:
@@ -196,4 +226,5 @@ The cloud-init configuration:
 1. clones this repository
 2. writes the `.env` file
 3. runs the same repo scripts used for manual deployment
+4. optionally sets up the Nextcloud sync — fill in `NC_URL`, `NC_USER` and `NC_APP_PASSWORD`, or leave them empty to skip it
 

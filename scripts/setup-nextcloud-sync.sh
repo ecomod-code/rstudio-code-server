@@ -66,7 +66,9 @@ SYNC_HOME="$(getent passwd "$SYNC_USER" | cut -d: -f6)"
 LOCAL_DIR="$BASE/volumes/workspace/$(basename "$NC_REMOTE_PATH")"
 
 sudo apt update
-sudo apt install -y nextcloud-desktop-cmd
+# The Recommends are desktop extras (keyring, GTK, gstreamer) - some of them
+# D-Bus services - that a headless CLI sync never uses.
+sudo apt install -y --no-install-recommends nextcloud-desktop-cmd
 
 sudo mkdir -p "$LOCAL_DIR"
 sudo chown "$PUID:$PGID" "$LOCAL_DIR"
